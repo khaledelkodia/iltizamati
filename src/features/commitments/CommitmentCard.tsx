@@ -7,7 +7,7 @@ import { formatCurrency } from '../../utils/currency';
 import { STATUS_COLORS, STATUS_LABELS } from '../../utils/constants';
 import { getRemainingText, getRemainingDays } from '../../utils/date';
 import type { CommitmentWithCategory } from '../../types/commitment';
-import { ChevronDown, CheckCircle, Clock } from 'lucide-react';
+import { ChevronDown, CheckCircle, Clock, Trash2 } from 'lucide-react';
 
 interface CommitmentCardProps {
   commitment: CommitmentWithCategory;
@@ -17,7 +17,31 @@ interface CommitmentCardProps {
 export default function CommitmentCard({ commitment, isPaid = false }: CommitmentCardProps) {
   const [expanded, setExpanded] = useState(false);
   const { settings } = useSettingsStore();
+  const { payments, markPaymentAsPaid, markPaymentAsPending, deleteCommitment } = useCommitmentStore();
   const [installmentTotalPaid, setInstallmentTotalPaid] = useState<number>(0);
+
+  const payment = payments.find(p => p.commitment_id === commitment.id);
+
+  const handleMarkAsPaid = async (e: React.MouseEvent) => {
+     e.stopPropagation();
+     if (payment) {
+        await markPaymentAsPaid(payment.id);
+     }
+  };
+
+  const handleMarkAsPending = async (e: React.MouseEvent) => {
+     e.stopPropagation();
+     if (payment) {
+        await markPaymentAsPending(payment.id);
+     }
+  };
+
+  const handleDelete = async (e: React.MouseEvent) => {
+     e.stopPropagation();
+     if (window.confirm('هل أنت متأكد من حذف هذا الالتزام نهائياً؟ سيتم حذف جميع الفواتير المتعلقة به.')) {
+        await deleteCommitment(commitment.id);
+     }
+  };
 
   useEffect(() => {
     if (commitment.commitment_type === 'installment' && commitment.total_amount) {
@@ -104,19 +128,41 @@ export default function CommitmentCard({ commitment, isPaid = false }: Commitmen
                  </div>
                )}
 
-               <div className="flex justify-between items-center">
-                 <div className="flex items-center space-x-2 rtl:space-x-reverse ltr:space-x text-sm text-text-muted">
-                   <Clock size={16} />
-                   <span>تاريخ الاستحقاق: {commitment.due_day} من كل شهر</span>
-                 </div>
-                 
-                 {!isPaid && (
-                    <button className="flex items-center space-x-1 rtl:space-x-reverse ltr:space-x text-accent-primary font-medium text-sm bg-accent-primary/10 px-3 py-1.5 rounded-lg border border-accent-primary/20">
-                       <CheckCircle size={16} />
-                       <span>تسجيل كمدفوع</span>
+                <div className="flex justify-between items-center pt-2">
+                  <div className="flex items-center space-x-2 rtl:space-x-reverse ltr:space-x text-xs text-text-muted">
+                    <Clock size={14} />
+                    <span>الاستحقاق: {commitment.due_day} من كل شهر</span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                    {/* Delete button */}
+                    <button 
+                      onClick={handleDelete}
+                      className="flex items-center justify-center p-2 rounded-lg bg-accent-danger/10 text-accent-danger border border-accent-danger/20 hover:bg-accent-danger/20 transition-colors"
+                      title="حذف الالتزام"
+                    >
+                      <Trash2 size={16} />
                     </button>
-                 )}
-               </div>
+
+                    {/* Pay / Unpay button */}
+                    {isPaid ? (
+                      <button 
+                        onClick={handleMarkAsPending}
+                        className="flex items-center space-x-1 rtl:space-x-reverse text-text-muted font-medium text-xs bg-bg-tertiary px-3 py-1.5 rounded-lg border border-border-secondary hover:bg-border-secondary transition-colors"
+                      >
+                        <span>تراجع عن الدفع</span>
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={handleMarkAsPaid}
+                        className="flex items-center space-x-1 rtl:space-x-reverse text-accent-primary font-medium text-xs bg-accent-primary/10 px-3 py-1.5 rounded-lg border border-accent-primary/20 hover:bg-accent-primary/20 transition-colors"
+                      >
+                        <CheckCircle size={14} />
+                        <span>تسجيل كمدفوع</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
             </div>
           </motion.div>
         )}
