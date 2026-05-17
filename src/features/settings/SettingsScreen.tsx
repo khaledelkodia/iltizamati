@@ -6,6 +6,8 @@ import { Moon, Sun, Bell, Lock, Download, Database, FileText, ChevronLeft, Chevr
 import type { CurrencyCode } from '../../types/settings';
 import { CURRENCY_NAMES } from '../../types/settings';
 import { useTranslation } from 'react-i18next';
+import { useNotifications } from '../notifications/useNotifications';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
 export default function SettingsScreen() {
   const { settings, updateSetting } = useSettingsStore();
@@ -37,6 +39,59 @@ export default function SettingsScreen() {
      } catch (err) {
         console.error('Failed to export', err);
      }
+  };
+
+  const { requestPermissions } = useNotifications();
+
+  const handleTestNotification = async () => {
+    // Check if web browser
+    const { Capacitor } = await import('@capacitor/core');
+    if (!Capacitor.isNativePlatform()) {
+      if (!("Notification" in window)) {
+        alert("هذا المتصفح لا يدعم الإشعارات.");
+        return;
+      }
+      
+      let permission = Notification.permission;
+      if (permission === 'default') {
+         permission = await Notification.requestPermission();
+      }
+      
+      if (permission === 'granted') {
+         setTimeout(() => {
+            new Notification("🔔 تجربة الإشعارات - التزاماتي", {
+               body: "هذا إشعار تجريبي لتأكيد عمل التنبيهات بنجاح في المتصفح!",
+               icon: "/favicon.ico"
+            });
+         }, 3000);
+         alert('سيظهر إشعار المتصفح التجريبي خلال 3 ثوانٍ!');
+      } else {
+         alert('يرجى تفعيل صلاحية إشعارات المتصفح لتجربة الميزة.');
+      }
+      return;
+    }
+
+    // Native platform (Android/iOS)
+    const hasPermission = await requestPermissions();
+    if (!hasPermission) {
+      alert('لم يتم منح صلاحية الإشعارات. يرجى تفعيلها من إعدادات الهاتف.');
+      return;
+    }
+
+    await LocalNotifications.schedule({
+      notifications: [
+        {
+          id: 9999,
+          title: '🔔 تجربة الإشعارات - التزاماتي',
+          body: 'هذا إشعار تجريبي لتأكيد عمل التنبيهات بنجاح! تذكيرك القادم سيكون في الوقت المحدد.',
+          schedule: { at: new Date(Date.now() + 3000) },
+          smallIcon: 'ic_stat_icon',
+          sound: 'default',
+          autoCancel: true,
+        }
+      ]
+    });
+    alert('سيظهر الإشعار التجريبي على هاتفك خلال 3 ثوانٍ!');
   };
 
   const SettingRow = ({ icon: Icon, title, subtitle, action }: any) => (
@@ -127,6 +182,19 @@ export default function SettingsScreen() {
                   </label>
                }
             />
+
+            <motion.button 
+               whileTap={{ scale: 0.98 }} 
+               onClick={handleTestNotification} 
+               className="w-full text-right"
+            >
+               <SettingRow 
+                  icon={Bell}
+                  title="إرسال إشعار تجريبي"
+                  subtitle="اختبر ظهور التنبيهات الفورية على هاتفك الآن"
+                  action={isRTL ? <ChevronLeft size={20} className="text-accent-primary animate-pulse" /> : <ChevronRight size={20} className="text-accent-primary animate-pulse" />}
+               />
+            </motion.button>
 
             <motion.button whileTap={{ scale: 0.98 }} className="w-full text-right">
                <SettingRow 
