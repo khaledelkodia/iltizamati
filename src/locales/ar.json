@@ -1,0 +1,101 @@
+{
+  "app": {
+    "name": "التزاماتي",
+    "subtitle": "إدارة مالية ذكية ومريحة",
+    "welcome": "مرحباً بك",
+    "dashboard_overview": "نظرة عامة على التزاماتك هذا الشهر"
+  },
+  "nav": {
+    "dashboard": "الرئيسية",
+    "commitments": "الالتزامات",
+    "calendar": "التقويم",
+    "settings": "الإعدادات"
+  },
+  "dashboard": {
+    "remaining_to_pay": "المتبقي للدفع",
+    "total_commitments": "إجمالي الالتزامات",
+    "paid_percentage": "مدفوع",
+    "paid_amount": "تم دفعه",
+    "overdue": "متأخر",
+    "commitments_count": "{{count}} التزام",
+    "add_new": "إضافة التزام جديد",
+    "upcoming_this_week": "قريباً هذا الأسبوع",
+    "view_all": "عرض الكل",
+    "no_upcoming": "لا توجد التزامات قادمة قريباً",
+    "upcoming_count": "يوجد {{count}} التزامات قادمة"
+  },
+  "commitments": {
+    "title": "الالتزامات",
+    "search_placeholder": "ابحث عن التزام...",
+    "filter_all": "الكل",
+    "filter_unpaid": "غير مدفوع",
+    "filter_paid": "مدفوع",
+    "no_results": "لا توجد التزامات مطابقة للبحث",
+    "due_date": "تاريخ الاستحقاق: {{day}} من كل شهر",
+    "mark_as_paid": "تسجيل كمدفوع",
+    "status": {
+      "paid": "مدفوع",
+      "upcoming": "قادم",
+      "overdue": "متأخر",
+      "due_today": "مستحق اليوم",
+      "pending": "قيد الانتظار"
+    }
+  },
+  "add_commitment": {
+    "title": "إضافة التزام جديد",
+    "name_label": "اسم الالتزام",
+    "name_placeholder": "مثال: فاتورة الكهرباء, قسط السيارة...",
+    "amount_label": "المبلغ",
+    "category_label": "القسم",
+    "due_day_label": "يوم الاستحقاق",
+    "recurring_label": "التكرار",
+    "recurring_monthly": "شهرياً",
+    "recurring_yearly": "سنوياً",
+    "notifications_label": "تفعيل الإشعارات",
+    "notifications_desc": "تذكير قبل موعد الاستحقاق",
+    "save": "حفظ الالتزام",
+    "saving": "جاري الحفظ..."
+  },
+  "calendar": {
+    "title": "التقويم",
+    "commitments_this_month": "التزامات هذا الشهر ({{count}})",
+    "day": "يوم {{day}}",
+    "status_paid": "مدفوع",
+    "status_pending": "معلق",
+    "sheet_title": "التزامات يوم {{day}}",
+    "pay_now": "دفع الآن"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "appearance": "المظهر والتفضيلات",
+    "language": "اللغة",
+    "language_ar": "العربية",
+    "language_en": "English",
+    "dark_mode": "الوضع الليلي",
+    "enabled": "مفعل",
+    "disabled": "معطل",
+    "currency": "العملة الافتراضية",
+    "notifications": "الإشعارات والأمان",
+    "reminders": "إشعارات التذكير",
+    "reminders_desc": "تذكير قبل موعد الدفع",
+    "pin": "رمز القفل (PIN)",
+    "pin_desc": "حماية بياناتك محلياً",
+    "data": "إدارة البيانات",
+    "backup": "نسخة احتياطية",
+    "backup_desc": "تصدير البيانات كملف",
+    "pdf": "تقارير PDF",
+    "soon": "قريباً"
+  },
+  "categories": {
+    "bills": "فواتير",
+    "installments": "أقساط",
+    "rent": "إيجار",
+    "subscriptions": "اشتراكات",
+    "association": "جمعية",
+    "insurance": "تأمين",
+    "internet": "إنترنت",
+    "electricity": "كهرباء",
+    "water": "مياه",
+    "other": "أخرى"
+  }
+}

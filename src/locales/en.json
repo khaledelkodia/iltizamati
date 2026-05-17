@@ -1,0 +1,101 @@
+{
+  "app": {
+    "name": "Iltizamati",
+    "subtitle": "Smart & Easy Financial Management",
+    "welcome": "Welcome",
+    "dashboard_overview": "Overview of your commitments this month"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "commitments": "Commitments",
+    "calendar": "Calendar",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "remaining_to_pay": "Remaining to Pay",
+    "total_commitments": "Total Commitments",
+    "paid_percentage": "Paid",
+    "paid_amount": "Paid Amount",
+    "overdue": "Overdue",
+    "commitments_count": "{{count}} Commitments",
+    "add_new": "Add New Commitment",
+    "upcoming_this_week": "Upcoming This Week",
+    "view_all": "View All",
+    "no_upcoming": "No upcoming commitments soon",
+    "upcoming_count": "There are {{count}} upcoming commitments"
+  },
+  "commitments": {
+    "title": "Commitments",
+    "search_placeholder": "Search commitments...",
+    "filter_all": "All",
+    "filter_unpaid": "Unpaid",
+    "filter_paid": "Paid",
+    "no_results": "No commitments match your search",
+    "due_date": "Due Date: {{day}} of every month",
+    "mark_as_paid": "Mark as Paid",
+    "status": {
+      "paid": "Paid",
+      "upcoming": "Upcoming",
+      "overdue": "Overdue",
+      "due_today": "Due Today",
+      "pending": "Pending"
+    }
+  },
+  "add_commitment": {
+    "title": "Add New Commitment",
+    "name_label": "Commitment Name",
+    "name_placeholder": "e.g., Electric Bill, Car Installment...",
+    "amount_label": "Amount",
+    "category_label": "Category",
+    "due_day_label": "Due Day",
+    "recurring_label": "Recurring",
+    "recurring_monthly": "Monthly",
+    "recurring_yearly": "Yearly",
+    "notifications_label": "Enable Notifications",
+    "notifications_desc": "Reminder before due date",
+    "save": "Save Commitment",
+    "saving": "Saving..."
+  },
+  "calendar": {
+    "title": "Calendar",
+    "commitments_this_month": "Commitments This Month ({{count}})",
+    "day": "Day {{day}}",
+    "status_paid": "Paid",
+    "status_pending": "Pending",
+    "sheet_title": "Commitments for Day {{day}}",
+    "pay_now": "Pay Now"
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance & Preferences",
+    "language": "Language",
+    "language_ar": "العربية",
+    "language_en": "English",
+    "dark_mode": "Dark Mode",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "currency": "Default Currency",
+    "notifications": "Notifications & Security",
+    "reminders": "Reminders",
+    "reminders_desc": "Reminders before due dates",
+    "pin": "PIN Lock",
+    "pin_desc": "Protect your data locally",
+    "data": "Data Management",
+    "backup": "Backup",
+    "backup_desc": "Export data as JSON",
+    "pdf": "PDF Reports",
+    "soon": "Coming Soon"
+  },
+  "categories": {
+    "bills": "Bills",
+    "installments": "Installments",
+    "rent": "Rent",
+    "subscriptions": "Subscriptions",
+    "association": "Association",
+    "insurance": "Insurance",
+    "internet": "Internet",
+    "electricity": "Electricity",
+    "water": "Water",
+    "other": "Other"
+  }
+}
