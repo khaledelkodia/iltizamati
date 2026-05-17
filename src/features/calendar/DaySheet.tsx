@@ -25,7 +25,7 @@ export default function DaySheet({ payments, onClose }: DaySheetProps) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[998]"
       />
 
       {/* Sheet */}
@@ -34,7 +34,7 @@ export default function DaySheet({ payments, onClose }: DaySheetProps) {
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-bg-primary rounded-t-[32px] z-50 flex flex-col shadow-xl border-t border-border-primary"
+        className="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-bg-primary rounded-t-[32px] z-[999] flex flex-col shadow-xl border-t border-border-primary"
       >
         {/* Handle */}
         <div className="w-full flex justify-center py-3">
@@ -53,7 +53,7 @@ export default function DaySheet({ payments, onClose }: DaySheetProps) {
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto space-y-4 pb-12 safe-area-bottom">
+        <div className="p-6 overflow-y-auto space-y-4 pb-24 safe-area-bottom">
           {payments.map(payment => (
             <div key={payment.id} className="bg-bg-secondary border border-border-primary rounded-2xl p-4">
               <div className="flex justify-between items-start mb-4">

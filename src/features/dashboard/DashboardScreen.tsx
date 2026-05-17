@@ -5,13 +5,13 @@ import { formatCurrency } from '../../utils/currency';
 import Card from '../../components/ui/Card';
 import ProgressCircle from '../../components/ui/ProgressCircle';
 import { motion } from 'framer-motion';
-import { Wallet, TrendingUp, TrendingDown, AlertCircle, ArrowUpRight } from 'lucide-react';
+import { Wallet, TrendingUp, TrendingDown, AlertCircle, ArrowUpRight, CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useReportsData } from '../reports/useReportsData';
 
 export default function DashboardScreen() {
-  const { currentMonthStats, payments } = useCommitmentStore();
+  const { currentMonthStats, payments, markPaymentAsPaid } = useCommitmentStore();
   const { settings } = useSettingsStore();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ export default function DashboardScreen() {
     : 0;
 
   const overdueCount = payments.filter(p => p.status === 'overdue').length;
-  const upcomingCount = payments.filter(p => p.status === 'pending').length;
+  const pendingOrOverduePayments = payments.filter(p => p.status === 'pending' || p.status === 'overdue');
 
   return (
     <div className="p-4 safe-area-top space-y-6">
@@ -132,15 +132,62 @@ export default function DashboardScreen() {
          </button>
       </div>
 
-      {/* Empty State for Upcoming */}
-      {upcomingCount === 0 ? (
+      {/* Empty State / List for Upcoming */}
+      {pendingOrOverduePayments.length === 0 ? (
         <div className="text-center py-8 bg-bg-secondary rounded-xl border border-border-primary">
            <p className="text-text-muted text-sm">{t('dashboard.no_upcoming')}</p>
         </div>
       ) : (
          <div className="space-y-3">
-            {/* List upcoming here */}
-            <p className="text-text-muted text-sm text-center">{t('dashboard.upcoming_count', { count: upcomingCount })}</p>
+             {pendingOrOverduePayments.slice(0, 5).map(payment => {
+                const isOverdue = payment.status === 'overdue';
+                return (
+                   <motion.div 
+                      key={payment.id}
+                      whileTap={{ scale: 0.98 }}
+                      className="bg-bg-secondary border border-border-primary rounded-2xl p-4 flex justify-between items-center shadow-sm hover:border-border-secondary transition-all"
+                   >
+                      <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                         <div 
+                           className="w-11 h-11 rounded-xl flex items-center justify-center text-xl"
+                           style={{ backgroundColor: `${payment.category_color}15`, color: payment.category_color }}
+                         >
+                            {payment.category_icon}
+                         </div>
+                         <div>
+                            <p className="font-bold text-text-primary text-sm">{payment.commitment_name}</p>
+                            <p className="text-xs text-text-muted mt-1">
+                               {isOverdue ? 'متأخر منذ' : 'يستحق في'} {new Date(payment.due_date).getDate()} من الشهر
+                            </p>
+                         </div>
+                      </div>
+                      <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                         <div className="text-left">
+                            <p className="font-extrabold text-sm text-text-primary">
+                               {formatCurrency(payment.commitment_amount, settings.currency)}
+                            </p>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border mt-1 inline-block ${
+                               isOverdue 
+                                 ? 'bg-accent-danger/10 text-accent-danger border-accent-danger/20' 
+                                 : 'bg-accent-warning/10 text-accent-warning border-accent-warning/20'
+                            }`}>
+                               {isOverdue ? 'متأخر' : 'معلق'}
+                            </span>
+                         </div>
+                         <button 
+                            onClick={async (e) => {
+                               e.stopPropagation();
+                               await markPaymentAsPaid(payment.id);
+                            }}
+                            className="w-8 h-8 rounded-full bg-accent-primary/10 text-accent-primary border border-accent-primary/20 flex items-center justify-center hover:bg-accent-primary hover:text-white transition-colors"
+                            title="تسجيل كمدفوع"
+                         >
+                            <CheckCircle size={16} />
+                         </button>
+                      </div>
+                   </motion.div>
+                );
+             })}
          </div>
       )}
 
