@@ -147,7 +147,7 @@
   --border-primary: rgba(0, 0, 0, 0.06);
   --border-secondary: rgba(0, 0, 0, 0.1);
 
-  --gradient-card: linear-gradient(145deg, #FFFFFF 0%, #F8FAFC 100%);
+  --gradient-card: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
   --gradient-hero: linear-gradient(180deg, #F1F5F9 0%, #F8FAFC 100%);
   --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.4) 100%);
 

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCommitmentStore } from '../../store/useCommitmentStore';
 import { useSettingsStore } from '../../store/useSettingsStore';
 import { formatCurrency } from '../../utils/currency';
-import { getMonthDays, getCurrentMonthYear, isSameDayCheck, format } from '../../utils/date';
+import { getMonthDays, getCurrentMonthYear, isSameDayCheck, format, parseISO } from '../../utils/date';
 import { ChevronRight, ChevronLeft, Calendar as CalendarIcon, CheckCircle, AlertCircle } from 'lucide-react';
 import DaySheet from './DaySheet';
 import type { PaymentWithCommitment } from '../../types/payment';
@@ -11,12 +11,16 @@ import type { PaymentWithCommitment } from '../../types/payment';
 export default function CalendarScreen() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDayPayments, setSelectedDayPayments] = useState<PaymentWithCommitment[] | null>(null);
-  const { payments } = useCommitmentStore();
+  const { payments, fetchPaymentsForMonth } = useCommitmentStore();
   const { settings } = useSettingsStore();
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const days = getMonthDays(year, month);
+
+  useEffect(() => {
+     fetchPaymentsForMonth(year, month);
+  }, [year, month, fetchPaymentsForMonth]);
 
   // Month navigation
   const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
@@ -24,7 +28,7 @@ export default function CalendarScreen() {
 
   // Get payments for a specific day
   const getPaymentsForDay = (date: Date) => {
-     return payments.filter(p => isSameDayCheck(new Date(p.due_date), date));
+     return payments.filter(p => isSameDayCheck(parseISO(p.due_date), date));
   };
 
   const dayNames = ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
@@ -113,7 +117,7 @@ export default function CalendarScreen() {
                      </div>
                      <div>
                         <p className="font-bold text-sm">{payment.commitment_name}</p>
-                        <p className="text-xs text-text-muted mt-0.5">يوم {new Date(payment.due_date).getDate()}</p>
+                        <p className="text-xs text-text-muted mt-0.5">يوم {parseISO(payment.due_date).getDate()}</p>
                      </div>
                   </div>
                   <div className="text-left">

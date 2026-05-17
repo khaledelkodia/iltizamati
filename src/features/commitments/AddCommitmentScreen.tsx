@@ -174,7 +174,7 @@ export default function AddCommitmentScreen() {
                      name="due_day"
                      min="1"
                      max="31"
-                     value={formData.due_day}
+                     value={formData.due_day || ''}
                      onChange={handleChange}
                      className="w-full bg-bg-secondary border border-border-primary rounded-xl p-4 text-text-primary focus:border-accent-primary transition-colors outline-none text-center font-bold"
                   />

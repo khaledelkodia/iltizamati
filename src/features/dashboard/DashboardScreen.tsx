@@ -77,7 +77,7 @@ export default function DashboardScreen() {
            </div>
            <div>
              <p className="text-text-muted text-xs">{t('dashboard.paid_amount')}</p>
-             <p className="font-bold text-white mt-1">{formatCurrency(currentMonthStats.totalPaid, settings.currency)}</p>
+             <p className="font-bold text-text-primary mt-1">{formatCurrency(currentMonthStats.totalPaid, settings.currency)}</p>
            </div>
         </Card>
 

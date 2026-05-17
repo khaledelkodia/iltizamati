@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { PieChart, TrendingDown, DollarSign, ArrowUpRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore } from '../../store/useSettingsStore';
+import { useCommitmentStore } from '../../store/useCommitmentStore';
 import { formatCurrency } from '../../utils/currency';
 import { useReportsData } from './useReportsData';
 import Card from '../../components/ui/Card';
@@ -10,6 +11,7 @@ import Card from '../../components/ui/Card';
 export default function ReportsScreen() {
   const { t } = useTranslation();
   const { settings } = useSettingsStore();
+  const { currentMonthStats } = useCommitmentStore();
   const { totalOutstandingDebt, monthlyBurden, categoryBreakdown, isLoading } = useReportsData();
 
   if (isLoading) {
@@ -33,6 +35,20 @@ export default function ReportsScreen() {
       </motion.div>
 
       <div className="space-y-4">
+         {/* Monthly Remaining to Pay */}
+         <Card variant="glass" className="p-5 flex justify-between items-center border-r-4 border-accent-primary">
+            <div className="flex items-center space-x-3 rtl:space-x-reverse ltr:space-x">
+               <div className="w-10 h-10 rounded-full bg-accent-primary/10 flex items-center justify-center">
+                  <DollarSign className="text-accent-primary" size={20} />
+               </div>
+               <div>
+                  <p className="text-text-muted text-xs">المتبقي للدفع هذا الشهر</p>
+                  <p className="font-extrabold text-text-primary text-xl mt-0.5">
+                     {formatCurrency(currentMonthStats.remaining, settings.currency)}
+                  </p>
+               </div>
+            </div>
+         </Card>
          {/* Total Debt Card */}
          <Card variant="gradient" className="p-6">
             <div className="flex items-center space-x-3 rtl:space-x-reverse ltr:space-x mb-2">
