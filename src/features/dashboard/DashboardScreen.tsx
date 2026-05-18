@@ -9,6 +9,7 @@ import { Wallet, TrendingUp, TrendingDown, AlertCircle, ArrowUpRight, CheckCircl
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useReportsData } from '../reports/useReportsData';
+import CategoryIcon from '../../components/ui/CategoryIcon';
 
 export default function DashboardScreen() {
   const { currentMonthStats, payments, markPaymentAsPaid } = useCommitmentStore();
@@ -147,12 +148,12 @@ export default function DashboardScreen() {
                       whileTap={{ scale: 0.98 }}
                       className="bg-bg-secondary border border-border-primary rounded-2xl p-4 flex justify-between items-center shadow-sm hover:border-border-secondary transition-all"
                    >
-                      <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                      <div className="flex items-center" style={{ gap: '12px' }}>
                          <div 
-                           className="w-11 h-11 rounded-xl flex items-center justify-center text-xl"
+                           className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
                            style={{ backgroundColor: `${payment.category_color}15`, color: payment.category_color }}
                          >
-                            {payment.category_icon}
+                            <CategoryIcon iconName={payment.category_icon} size={22} />
                          </div>
                          <div>
                             <p className="font-bold text-text-primary text-sm">{payment.commitment_name}</p>
@@ -161,8 +162,8 @@ export default function DashboardScreen() {
                             </p>
                          </div>
                       </div>
-                      <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                         <div className="text-left">
+                      <div className="flex items-center" style={{ gap: '16px' }}>
+                         <div className="flex flex-col items-end text-left ltr:text-right">
                             <p className="font-extrabold text-sm text-text-primary">
                                {formatCurrency(payment.commitment_amount, settings.currency)}
                             </p>
@@ -179,10 +180,10 @@ export default function DashboardScreen() {
                                e.stopPropagation();
                                await markPaymentAsPaid(payment.id);
                             }}
-                            className="w-8 h-8 rounded-full bg-accent-primary/10 text-accent-primary border border-accent-primary/20 flex items-center justify-center hover:bg-accent-primary hover:text-white transition-colors"
-                            title="تسجيل كمدفوع"
-                         >
-                            <CheckCircle size={16} />
+                            className="w-9 h-9 rounded-full bg-accent-primary/10 text-accent-primary border border-accent-primary/20 flex items-center justify-center hover:bg-accent-primary hover:text-white transition-colors flex-shrink-0"
+                             title="تسجيل كمدفوع"
+                          >
+                             <CheckCircle size={18} />
                          </button>
                       </div>
                    </motion.div>

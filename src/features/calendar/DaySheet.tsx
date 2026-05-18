@@ -6,6 +6,7 @@ import { formatCurrency } from '../../utils/currency';
 import { format } from '../../utils/date';
 import type { PaymentWithCommitment } from '../../types/payment';
 import { X, CheckCircle, AlertCircle } from 'lucide-react';
+import CategoryIcon from '../../components/ui/CategoryIcon';
 
 interface DaySheetProps {
   payments: PaymentWithCommitment[];
@@ -57,9 +58,9 @@ export default function DaySheet({ payments, onClose }: DaySheetProps) {
           {payments.map(payment => (
             <div key={payment.id} className="bg-bg-secondary border border-border-primary rounded-2xl p-4">
               <div className="flex justify-between items-start mb-4">
-                <div className="flex items-center space-x-3 space-x-reverse">
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style={{ backgroundColor: `${payment.category_color}20`, color: payment.category_color }}>
-                    {payment.category_icon}
+                <div className="flex items-center" style={{ gap: '12px' }}>
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0" style={{ backgroundColor: `${payment.category_color}20`, color: payment.category_color }}>
+                    <CategoryIcon iconName={payment.category_icon} size={24} />
                   </div>
                   <div>
                     <h3 className="font-bold text-base">{payment.commitment_name}</h3>

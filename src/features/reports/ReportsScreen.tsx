@@ -7,6 +7,7 @@ import { useCommitmentStore } from '../../store/useCommitmentStore';
 import { formatCurrency } from '../../utils/currency';
 import { useReportsData } from './useReportsData';
 import Card from '../../components/ui/Card';
+import CategoryIcon from '../../components/ui/CategoryIcon';
 
 export default function ReportsScreen() {
   const { t } = useTranslation();
@@ -135,17 +136,17 @@ export default function ReportsScreen() {
                <div className="space-y-4 bg-bg-secondary p-5 rounded-2xl border border-border-primary shadow-sm">
                   {categoryBreakdown.map((item, index) => {
                      const cat = categories.find(c => c.id === item.category_id);
-                     const icon = cat ? cat.icon : '📌';
+                     const iconName = cat ? cat.icon : '';
                      return (
                         <div key={item.category_id} className="space-y-2">
                            <div className="flex justify-between items-center">
-                              <div className="flex items-center space-x-2.5 rtl:space-x-reverse">
+                              <div className="flex items-center" style={{ gap: '10px' }}>
                                  <div 
                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-base"
                                    style={{ backgroundColor: `${item.color}15`, color: item.color }}
                                  >
-                                   {icon}
-                                 </div>
+                                    {iconName ? <CategoryIcon iconName={iconName} size={16} /> : '📌'}
+                                  </div>
                                  <div>
                                     <p className="font-bold text-text-primary text-sm">{item.category_name}</p>
                                     <p className="text-[11px] text-text-muted">{formatCurrency(item.amount, settings.currency)}</p>

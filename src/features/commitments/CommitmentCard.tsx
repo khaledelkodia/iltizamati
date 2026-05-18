@@ -8,6 +8,7 @@ import { STATUS_COLORS, STATUS_LABELS } from '../../utils/constants';
 import { getRemainingText, getRemainingDays } from '../../utils/date';
 import type { CommitmentWithCategory } from '../../types/commitment';
 import { ChevronDown, CheckCircle, Clock, Trash2 } from 'lucide-react';
+import CategoryIcon from '../../components/ui/CategoryIcon';
 
 interface CommitmentCardProps {
   commitment: CommitmentWithCategory;
@@ -72,7 +73,7 @@ export default function CommitmentCard({ commitment, isPaid = false }: Commitmen
             className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
             style={{ backgroundColor: `${commitment.category_color}20`, color: commitment.category_color }}
           >
-            <span className="opacity-90">{commitment.category_icon}</span>
+            <CategoryIcon iconName={commitment.category_icon} size={24} className="opacity-90" />
           </div>
 
           {/* Info */}
