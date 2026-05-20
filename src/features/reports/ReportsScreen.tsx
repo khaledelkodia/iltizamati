@@ -24,7 +24,7 @@ export default function ReportsScreen() {
   }
 
   return (
-    <div className="pb-24">
+    <div className="pb-36 px-4 safe-area-top min-h-screen flex flex-col">
       {/* Header */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}

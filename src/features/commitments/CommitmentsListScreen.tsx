@@ -9,6 +9,7 @@ export default function CommitmentsListScreen() {
   const { commitments, payments } = useCommitmentStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState<'all' | 'paid' | 'unpaid'>('all');
+  const [expandedId, setExpandedId] = useState<number | null>(null);
   const navigate = useNavigate();
 
   const filteredCommitments = commitments.filter(c => {
@@ -79,7 +80,7 @@ export default function CommitmentsListScreen() {
       </div>
 
       {/* List */}
-      <div className="flex-1 overflow-y-auto pb-6 -mx-4 px-4 space-y-4">
+      <div className="flex-1 overflow-y-auto pb-36 -mx-4 px-4 space-y-4">
          <AnimatePresence mode="popLayout">
             {filteredCommitments.length > 0 ? (
                filteredCommitments.map(commitment => {
@@ -91,6 +92,8 @@ export default function CommitmentsListScreen() {
                         key={commitment.id} 
                         commitment={commitment} 
                         isPaid={isPaid}
+                        isExpanded={expandedId === commitment.id}
+                        onToggle={() => setExpandedId(expandedId === commitment.id ? null : commitment.id)}
                      />
                   );
                })

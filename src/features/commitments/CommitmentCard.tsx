@@ -13,10 +13,21 @@ import CategoryIcon from '../../components/ui/CategoryIcon';
 interface CommitmentCardProps {
   commitment: CommitmentWithCategory;
   isPaid?: boolean;
+  isExpanded?: boolean;
+  onToggle?: () => void;
 }
 
-export default function CommitmentCard({ commitment, isPaid = false }: CommitmentCardProps) {
-  const [expanded, setExpanded] = useState(false);
+export default function CommitmentCard({ commitment, isPaid = false, isExpanded, onToggle }: CommitmentCardProps) {
+  const [localExpanded, setLocalExpanded] = useState(false);
+  const isCardExpanded = isExpanded !== undefined ? isExpanded : localExpanded;
+  
+  const handleToggle = () => {
+    if (onToggle) {
+      onToggle();
+    } else {
+      setLocalExpanded(!localExpanded);
+    }
+  };
   const { settings } = useSettingsStore();
   const { payments, markPaymentAsPaid, markPaymentAsPending, deleteCommitment } = useCommitmentStore();
   const [installmentTotalPaid, setInstallmentTotalPaid] = useState<number>(0);
@@ -61,7 +72,7 @@ export default function CommitmentCard({ commitment, isPaid = false }: Commitmen
       }
       paymentRepo.getByCommitmentId(commitment.id).then(setHistory);
     }
-  }, [commitment.id, commitment.commitment_type, commitment.total_amount, isPaid, expanded]);
+  }, [commitment.id, commitment.commitment_type, commitment.total_amount, isPaid, isCardExpanded]);
 
   const remainingDays = getRemainingDays(new Date(new Date().getFullYear(), new Date().getMonth(), commitment.due_day));
   
@@ -75,7 +86,7 @@ export default function CommitmentCard({ commitment, isPaid = false }: Commitmen
   return (
     <motion.div
       layout
-      onClick={() => setExpanded(!expanded)}
+      onClick={handleToggle}
       className="bg-bg-secondary border border-border-primary rounded-2xl overflow-hidden shadow-sm"
       whileTap={{ scale: 0.98 }}
     >
@@ -111,7 +122,7 @@ export default function CommitmentCard({ commitment, isPaid = false }: Commitmen
       </div>
 
                                                                         <AnimatePresence>
-        {expanded && (
+        {isCardExpanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}

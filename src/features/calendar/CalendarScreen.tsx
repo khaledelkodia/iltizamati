@@ -34,7 +34,7 @@ export default function CalendarScreen() {
   const dayNames = ['أحد', 'إثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
 
   return (
-    <div className="p-4 safe-area-top min-h-screen flex flex-col">
+    <div className="p-4 safe-area-top min-h-screen flex flex-col pb-36">
        
       {/* Header */}
       <div className="flex justify-between items-center mt-4 mb-6">

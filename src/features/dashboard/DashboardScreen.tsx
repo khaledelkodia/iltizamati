@@ -26,7 +26,7 @@ export default function DashboardScreen() {
   const pendingOrOverduePayments = payments.filter(p => p.status === 'pending' || p.status === 'overdue');
 
   return (
-    <div className="p-4 safe-area-top space-y-6">
+    <div className="p-4 safe-area-top space-y-6 pb-36">
       
       {/* Header */}
       <motion.div 
