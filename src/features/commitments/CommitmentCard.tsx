@@ -110,15 +110,15 @@ export default function CommitmentCard({ commitment, isPaid = false }: Commitmen
         </div>
       </div>
 
-      <AnimatePresence>
+                                                                        <AnimatePresence>
         {expanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="border-t border-border-primary bg-bg-tertiary/50"
+            className="border-t border-border-primary/45 bg-bg-tertiary/10"
           >
-            <div className="p-4 flex flex-col space-y-4">
+            <div className="p-4 flex flex-col space-y-5">
                {/* Installment Progress & Gorgeous Report Details */}
                {commitment.commitment_type === 'installment' && commitment.total_amount && commitment.amount && (() => {
                   const totalInstallments = Math.ceil(commitment.total_amount / commitment.amount);
@@ -131,8 +131,21 @@ export default function CommitmentCard({ commitment, isPaid = false }: Commitmen
                     isForecast: boolean;
                   }> = [];
                   
-                  // 1. Add database history items
-                  history.forEach((p, index) => {
+                  // 1. Filter out duplicate history items for the same month to solve double dates bug
+                  const seenMonths = new Set<string>();
+                  const uniqueHistory: typeof history = [];
+                  history.forEach(p => {
+                    if (p.due_date) {
+                      const monthKey = p.due_date.substring(0, 7); // "YYYY-MM"
+                      if (!seenMonths.has(monthKey)) {
+                        seenMonths.add(monthKey);
+                        uniqueHistory.push(p);
+                      }
+                    }
+                  });
+
+                  // Populate scheduleItems using uniqueHistory
+                  uniqueHistory.forEach((p, index) => {
                     scheduleItems.push({
                       number: index + 1,
                       amount: p.amount_paid || commitment.amount,
@@ -144,17 +157,17 @@ export default function CommitmentCard({ commitment, isPaid = false }: Commitmen
                   });
 
                   // 2. Add forecasted future items if they are not yet in database
-                  let currentPaidTotal = history.reduce((sum, p) => sum + (p.status === 'paid' ? (p.amount_paid || commitment.amount) : 0), 0);
+                  let currentPaidTotal = uniqueHistory.reduce((sum, p) => sum + (p.status === 'paid' ? (p.amount_paid || commitment.amount) : 0), 0);
                   let remainingTotal = commitment.total_amount - currentPaidTotal;
                   
                   let lastDate = new Date();
-                  if (history.length > 0) {
-                    lastDate = new Date(history[history.length - 1].due_date);
+                  if (uniqueHistory.length > 0) {
+                    lastDate = new Date(uniqueHistory[uniqueHistory.length - 1].due_date);
                   } else {
                     lastDate.setDate(commitment.due_day);
                   }
 
-                  const generatedCount = history.length;
+                  const generatedCount = uniqueHistory.length;
                   const remainingInstallmentsCount = Math.max(0, totalInstallments - generatedCount);
 
                   for (let i = 0; i < remainingInstallmentsCount; i++) {
@@ -175,127 +188,161 @@ export default function CommitmentCard({ commitment, isPaid = false }: Commitmen
                   }
 
                   return (
-                    <div className="bg-bg-secondary p-4 rounded-2xl border border-border-secondary space-y-4 shadow-inner">
-                      <div className="flex justify-between items-end">
-                        <div>
-                          <p className="text-[10px] text-text-muted font-bold font-secondary">المبلغ الإجمالي المتبقي</p>
-                          <p className="font-extrabold text-text-primary mt-1 text-base leading-none">
-                            {formatCurrency(commitment.total_amount - installmentTotalPaid, settings.currency)}
-                          </p>
-                        </div>
-                        <div className="text-left ltr:text-right">
-                          <p className="text-xs font-bold text-accent-primary">سُدد {Math.min(100, Math.round((installmentTotalPaid / commitment.total_amount) * 100))}%</p>
-                          <p className="text-[9px] text-text-muted mt-0.5">من أصل {formatCurrency(commitment.total_amount, settings.currency)}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="w-full bg-border-primary rounded-full h-2.5 overflow-hidden">
-                        <div 
-                          className="bg-gradient-primary h-full transition-all duration-500 rounded-full" 
-                          style={{ width: `${Math.min(100, (installmentTotalPaid / commitment.total_amount) * 100)}%` }}
-                        />
+                    <div className="space-y-4">
+                      {/* Premium Borderless 2-Column Summary */}
+                      <div className="flex justify-between items-center py-2 px-1">
+                         <div>
+                            <span className="text-[10px] text-text-muted font-bold block mb-1">المبلغ المتبقي</span>
+                            <span className="text-lg font-black text-accent-warning leading-none">
+                               {formatCurrency(commitment.total_amount - installmentTotalPaid, settings.currency)}
+                            </span>
+                         </div>
+                         <div className="text-left ltr:text-right">
+                            <span className="text-[10px] text-text-muted font-bold block mb-1">نسبة السداد</span>
+                            <span className="text-sm font-extrabold text-accent-primary leading-none">
+                               {Math.min(100, Math.round((installmentTotalPaid / commitment.total_amount) * 100))}% 
+                               <span className="text-[10px] text-text-muted font-normal mr-1">
+                                  (سُدد {formatCurrency(installmentTotalPaid, settings.currency)} من {formatCurrency(commitment.total_amount, settings.currency)})
+                               </span>
+                            </span>
+                         </div>
                       </div>
 
-                      {/* Installment Movements List */}
-                      <div className="pt-3 border-t border-border-primary space-y-2">
-                         <p className="text-xs font-extrabold text-text-primary flex items-center gap-1.5 mb-2">
+                      {/* Glowing Slim Progress Bar */}
+                      <div className="space-y-1.5 px-1">
+                         <div className="w-full bg-border-primary rounded-full h-1.5 overflow-hidden">
+                           <div 
+                             className="bg-gradient-primary h-full transition-all duration-500 rounded-full" 
+                             style={{ width: `${Math.min(100, (installmentTotalPaid / commitment.total_amount) * 100)}%` }}
+                           />
+                         </div>
+                      </div>
+
+                      {/* Gorgeous Native Table with Premium Visible Row Lines */}
+                      <div className="space-y-3 pt-3">
+                         <p className="text-xs font-black text-text-primary flex items-center gap-1.5 px-1">
                             <span>📊</span>
-                            <span>جدول سداد الأقساط</span>
+                            <span>جدول الدفعات التفصيلي ({scheduleItems.length} أقساط)</span>
                          </p>
                          
-                         <div className="space-y-1.5 max-h-[180px] overflow-y-auto pr-1">
-                            {scheduleItems.map((item) => {
-                               const isItemPaid = item.status === 'paid';
-                               return (
-                                  <div 
-                                     key={item.number} 
-                                     className={`flex justify-between items-center py-2 px-3 rounded-xl border transition-all ${
-                                        isItemPaid 
-                                          ? 'bg-bg-tertiary/20 border-border-primary/50 opacity-40' 
-                                          : 'bg-bg-primary/50 border-border-secondary/60 hover:border-accent-primary/30'
-                                     }`}
-                                  >
-                                     <div className="flex items-center" style={{ gap: '10px' }}>
-                                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${
-                                           isItemPaid ? 'bg-bg-tertiary text-text-muted' : 'bg-accent-primary/10 text-accent-primary'
-                                        }`}>
-                                           {item.number}
-                                        </span>
-                                        <div>
-                                           <p className={`text-xs font-bold ${isItemPaid ? 'text-text-muted line-through' : 'text-text-primary'}`}>
+                         <div className="w-full overflow-x-auto">
+                            <table className="w-full text-right border-collapse bg-transparent">
+                               <thead>
+                                  <tr className="border-b border-white/20 bg-transparent">
+                                     <th className="text-[10px] text-text-muted font-black py-3.5 px-2 text-center w-12">#</th>
+                                     <th className="text-[10px] text-text-muted font-black py-3.5 px-2">قيمة القسط</th>
+                                     <th className="text-[10px] text-text-muted font-black py-3.5 px-2">تاريخ الاستحقاق</th>
+                                     <th className="text-[10px] text-text-muted font-black py-3.5 px-2">تاريخ السداد</th>
+                                     <th className="text-[10px] text-text-muted font-black py-3.5 px-2 text-center w-28">الحالة</th>
+                                  </tr>
+                                </thead>
+                               <tbody className="bg-transparent">
+                                  {scheduleItems.map((item, index) => {
+                                     const isItemPaid = item.status === 'paid';
+                                     const isActive = item.status === 'pending' && !item.isForecast;
+
+                                     return (
+                                        <tr 
+                                           key={item.number} 
+                                           className={`border-b border-white/[0.12] transition-all duration-200 hover:bg-bg-secondary/15 bg-transparent ${isItemPaid ? 'opacity-50' : ''}`}
+                                        >
+                                           {/* Column 1: Row Number */}
+                                           <td className="py-3 px-2 text-center font-black text-xs text-text-muted">
+                                              {item.number}
+                                           </td>
+
+                                           {/* Column 2: Amount */}
+                                           <td className="py-3 px-2 font-extrabold text-xs whitespace-nowrap text-text-primary">
                                               {formatCurrency(item.amount, settings.currency)}
-                                           </p>
-                                           <p className="text-[9px] text-text-muted mt-0.5">
-                                              {isItemPaid 
-                                                 ? `دُفع في ${item.paidDate ? item.paidDate.getDate() : ''}/${item.paidDate ? item.paidDate.getMonth() + 1 : ''}/${item.paidDate ? item.paidDate.getFullYear() : ''}`
-                                                 : `يستحق في ${item.dueDate.getDate()}/${item.dueDate.getMonth() + 1}/${item.dueDate.getFullYear()}`
-                                              }
-                                           </p>
-                                        </div>
-                                     </div>
-                                     
-                                     <div className="flex-shrink-0">
-                                        {isItemPaid ? (
-                                           <span className="text-[9px] font-bold text-accent-primary bg-accent-primary/10 px-2 py-0.5 rounded-full border border-accent-primary/20">
-                                              مكتمل ✓
-                                           </span>
-                                        ) : item.status === 'overdue' ? (
-                                           <span className="text-[9px] font-bold text-accent-danger bg-accent-danger/10 px-2 py-0.5 rounded-full border border-accent-danger/20 animate-pulse">
-                                              متأخر ⚠
-                                           </span>
-                                        ) : (
-                                           <span className="text-[9px] font-bold text-accent-warning bg-accent-warning/10 px-2 py-0.5 rounded-full border border-accent-warning/20">
-                                              {item.isForecast ? 'مستقبلي 🗓️' : 'مستحق ⏳'}
-                                           </span>
-                                        )}
-                                     </div>
-                                  </div>
-                               );
-                            })}
+                                           </td>
+
+                                           {/* Column 3: Due Date */}
+                                           <td className="py-3 px-2 text-[10px] text-text-muted font-bold whitespace-nowrap">
+                                              {item.dueDate.getDate()}/{item.dueDate.getMonth() + 1}/{item.dueDate.getFullYear()}
+                                           </td>
+
+                                           {/* Column 4: Paid Date */}
+                                           <td className="py-3 px-2 text-[10px] font-bold whitespace-nowrap">
+                                              {isItemPaid && item.paidDate ? (
+                                                 <span className="text-accent-primary">
+                                                    {item.paidDate.getDate()}/{item.paidDate.getMonth() + 1}/{item.paidDate.getFullYear()}
+                                                 </span>
+                                              ) : (
+                                                 <span className="text-text-muted/40 font-normal">-</span>
+                                              )}
+                                           </td>
+
+                                           {/* Column 5: Clean Borderless Pill Badge */}
+                                           <td className="py-3 px-2 text-center whitespace-nowrap">
+                                              {isItemPaid ? (
+                                                 <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded text-[9px] font-bold bg-accent-primary/10 text-accent-primary">
+                                                    تم الدفع
+                                                 </span>
+                                              ) : item.status === 'overdue' ? (
+                                                 <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded text-[9px] font-bold bg-accent-danger/10 text-accent-danger animate-pulse">
+                                                    متأخر
+                                                 </span>
+                                              ) : isActive ? (
+                                                 <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded text-[9px] font-bold bg-accent-primary/20 text-accent-primary">
+                                                    مستحق
+                                                 </span>
+                                              ) : (
+                                                 <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded text-[9px] font-bold bg-bg-secondary text-text-muted">
+                                                    قادم
+                                                 </span>
+                                              )}
+                                           </td>
+                                        </tr>
+                                     );
+                                  })}
+                               </tbody>
+                            </table>
                          </div>
                       </div>
                     </div>
                   );
                })()}
 
-                <div className="flex justify-between items-center pt-2">
-                  <div className="flex items-center space-x-2 rtl:space-x-reverse ltr:space-x text-xs text-text-muted">
-                    <Clock size={14} />
-                    <span>الاستحقاق: {commitment.due_day} من كل شهر</span>
-                  </div>
-                  
-                  <div className="flex items-center" style={{ gap: '12px', flex: 1, justifyContent: 'flex-end' }}>
-                    {/* Delete button */}
-                    <button 
-                      onClick={handleDelete}
-                      className="flex items-center justify-center p-2.5 rounded-xl bg-accent-danger/10 text-accent-danger border border-accent-danger/20 hover:bg-accent-danger/20 transition-colors flex-shrink-0"
-                      title="حذف الالتزام"
-                    >
-                      <Trash2 size={18} />
-                    </button>
+                 {/* Premium Spaced Bottom Actions Row */}
+                 <div className="pt-3 border-t border-border-primary/40 space-y-3">
+                   {/* Due Date Indicator */}
+                   <div className="flex items-center text-xs text-text-muted px-1" style={{ gap: '6px' }}>
+                     <Clock size={13} className="text-text-muted" />
+                     <span>تاريخ الاستحقاق الشهري: {commitment.due_day} من كل شهر</span>
+                   </div>
+                   
+                   <div className="flex items-center w-full" style={{ gap: '12px' }}>
+                     {/* Delete button */}
+                     <button 
+                       onClick={handleDelete}
+                       className="flex items-center justify-center p-3 rounded-xl bg-accent-danger/10 text-accent-danger border border-accent-danger/25 hover:bg-accent-danger/20 transition-all active:scale-95 flex-shrink-0"
+                       title="حذف الالتزام"
+                     >
+                       <Trash2 size={18} />
+                     </button>
 
-                    {/* Pay / Unpay button */}
-                    {isPaid ? (
-                      <button 
-                        onClick={handleMarkAsPending}
-                        className="flex items-center justify-center text-text-muted font-bold text-xs bg-bg-secondary px-4 py-2.5 rounded-xl border border-border-secondary hover:bg-border-secondary transition-colors"
-                        style={{ gap: '6px' }}
-                      >
-                        <CheckCircle size={15} className="text-text-muted" />
-                        <span>تراجع عن الدفع</span>
-                      </button>
-                    ) : (
-                      <button 
-                        onClick={handleMarkAsPaid}
-                        className="flex items-center justify-center text-white font-extrabold text-xs bg-gradient-primary px-4 py-2.5 rounded-xl border-none shadow-glow-green hover:opacity-95 transition-all flex-shrink-0"
-                        style={{ gap: '6px' }}
-                      >
-                        <CheckCircle size={15} />
-                        <span>تسجيل كمدفوع</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
+                     {/* Pay / Unpay button */}
+                     {isPaid ? (
+                       <button 
+                         onClick={handleMarkAsPending}
+                         className="flex-1 flex items-center justify-center text-text-muted font-bold text-xs bg-bg-secondary border border-border-secondary py-3 rounded-xl hover:bg-border-secondary transition-all active:scale-95"
+                         style={{ gap: '8px' }}
+                       >
+                         <CheckCircle size={16} className="text-text-muted" />
+                         <span>تراجع عن تسجيل الدفع</span>
+                       </button>
+                     ) : (
+                       <button 
+                         onClick={handleMarkAsPaid}
+                         className="flex-1 flex items-center justify-center text-white font-extrabold text-xs bg-gradient-primary py-3 rounded-xl border-none shadow-glow-green hover:opacity-95 transition-all flex-shrink-0"
+                         style={{ gap: '8px' }}
+                       >
+                         <CheckCircle size={16} />
+                         <span>تسجيل كمدفوع this month</span>
+                       </button>
+                     )}
+                   </div>
+                 </div>
             </div>
           </motion.div>
         )}
